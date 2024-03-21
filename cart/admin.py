@@ -5,7 +5,7 @@ from .models import Cart, CartItem
 
 @register(Cart)
 class CartAdmin(ModelAdmin):
-    list_dsiplay = ['cart_id']
+    list_display = ['cart_id']
 
 
 @register(CartItem)

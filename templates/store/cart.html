@@ -4,6 +4,13 @@
   <div class="container">
     <!-- ============================ COMPONENT 1 ================================= -->
 
+    {% if not cart_items %}
+    <h2 class="text-center">Your shopping cart is empty</h2>
+    <br />
+    <div class="text-center">
+      <a href="{% url 'store' %}" class="btn btn-primary">Continue Shopping</a>
+    </div>
+    {% else %}
     <div class="row">
       <aside class="col-lg-9">
         <div class="card">
@@ -25,12 +32,19 @@
                       <img src="{{item.product.image.url}}" class="img-sm" />
                     </div>
                     <figcaption class="info">
-                      <a href="#" class="title text-dark"
+                      <a
+                        href="{{ item.product.get_url }}"
+                        class="title text-dark"
                         >{{item.product.product_name}}</a
                       >
                       <p class="text-muted small">
-                        Matrix: 25 Mpx <br />
-                        Brand: Canon
+                        {% if item.variations.all %}
+                        <!-- prettier-ignore -->
+                        {% for variation in item.variations.all %}
+                        <!-- prettier-ignore -->
+                        {{variation.variation_category | capfirst }} : {{variation.variation_value | capfirst }}
+                        <br />
+                        {% endfor %} {% endif %}
                       </p>
                     </figcaption>
                   </figure>
@@ -40,13 +54,26 @@
                   <div class="col">
                     <div class="input-group input-spinner">
                       <div class="input-group-prepend">
-                        <button
-                          class="btn btn-light"
-                          type="button"
-                          id="button-plus"
+                        <form
+                          action="{% url 'reduce_cart_item' item.id %}"
+                          method="POST"
                         >
-                          <i class="fa fa-minus"></i>
-                        </button>
+                          <!-- prettier-ignore -->
+                          {% csrf_token %} {% for variation in item.variations.all %}
+                          <input
+                            type="hidden"
+                            name="{{variation.variation_category | lower }}"
+                            value="{{variation.variation_value | capfirst }}"
+                          />
+                          {% endfor %}
+                          <button
+                            class="btn btn-light"
+                            id="button-plus"
+                            type="submit"
+                          >
+                            <i class="fa fa-minus"></i>
+                          </button>
+                        </form>
                       </div>
                       <input
                         type="text"
@@ -54,13 +81,26 @@
                         value="{{item.quantity}}"
                       />
                       <div class="input-group-append">
-                        <button
-                          class="btn btn-light"
-                          type="button"
-                          id="button-minus"
+                        <form
+                          action="{% url 'add_to_cart' item.product.id %}"
+                          method="POST"
                         >
-                          <i class="fa fa-plus"></i>
-                        </button>
+                          <!-- prettier-ignore -->
+                          {% csrf_token %} {% for variation in item.variations.all %}
+                          <input
+                            type="hidden"
+                            name="{{variation.variation_category | lower }}"
+                            value="{{variation.variation_value | capfirst }}"
+                          />
+                          {% endfor %}
+                          <button
+                            class="btn btn-light"
+                            type="submit"
+                            id="button-minus"
+                          >
+                            <i class="fa fa-plus"></i>
+                          </button>
+                        </form>
                       </div>
                     </div>
                     <!-- input-group.// -->
@@ -69,13 +109,21 @@
                 </td>
                 <td>
                   <div class="price-wrap">
-                    <var class="price">$1156.00</var>
-                    <small class="text-muted"> $315.20 each </small>
+                    <var class="price">${{item.sub_total}}</var>
+                    <small class="text-muted">
+                      ${{item.product.price}} each
+                    </small>
                   </div>
                   <!-- price-wrap .// -->
                 </td>
                 <td class="text-right">
-                  <a href="" class="btn btn-danger"> Remove</a>
+                  <a
+                    href="{% url 'remove_cart_item' item.id %}"
+                    class="btn btn-danger"
+                    onclick="return confirm('Are you sure you want to remove this item?')"
+                  >
+                    Remove</a
+                  >
                 </td>
               </tr>
               {% endfor %}
@@ -90,15 +138,17 @@
           <div class="card-body">
             <dl class="dlist-align">
               <dt>Total price:</dt>
-              <dd class="text-right">$69.97</dd>
+              <dd class="text-right">${{totals}}</dd>
             </dl>
             <dl class="dlist-align">
               <dt>Tax:</dt>
-              <dd class="text-right">$10.00</dd>
+              <dd class="text-right">${{tax}}</dd>
             </dl>
             <dl class="dlist-align">
               <dt>Total:</dt>
-              <dd class="text-right text-dark b"><strong>$59.97</strong></dd>
+              <dd class="text-right text-dark b">
+                <strong>${{grand_totals}}</strong>
+              </dd>
             </dl>
             <hr />
             <p class="text-center mb-3">
@@ -107,7 +157,7 @@
             <a href="./place-order.html" class="btn btn-primary btn-block">
               Checkout
             </a>
-            <a href="./store.html" class="btn btn-light btn-block"
+            <a href="{% url 'store' %}" class="btn btn-light btn-block"
               >Continue Shopping</a
             >
           </div>
@@ -117,6 +167,7 @@
       </aside>
       <!-- col.// -->
     </div>
+    {% endif %}
     <!-- row.// -->
     <!-- ============================ COMPONENT 1 END .// ================================= -->
   </div>
