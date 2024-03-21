@@ -36,7 +36,7 @@ class User(AbstractBaseUser):
     username = models.CharField(
         max_length=50, unique=True, db_collation='case_insensitive')
     phone_number = models.CharField(
-        max_length=50, unique=True, db_collation='case_insensitive')
+        max_length=50, unique=True, null=True, db_collation='case_insensitive')
     email = models.EmailField(
         max_length=50, unique=True, db_collation='case_insensitive')
     # required fields
