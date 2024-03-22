@@ -10,4 +10,4 @@ class CartAdmin(ModelAdmin):
 
 @register(CartItem)
 class CartItemAdmin(ModelAdmin):
-    list_display = ['product', 'cart']
+    list_display = ['product', 'cart', 'quantity']

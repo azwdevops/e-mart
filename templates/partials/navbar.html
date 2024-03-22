@@ -103,7 +103,7 @@
                 >Welcome {{user.first_name}}</small
               >
               <div>
-                <a href="#"> Dashboard</a>
+                <a href="{% url 'dashboard' %}"> Dashboard</a>
                 <span class="dark-transp"> | </span>
                 <a href="{% url 'logout_user' %}">Logout</a>
               </div>
