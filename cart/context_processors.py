@@ -2,6 +2,8 @@ from .models import Cart, CartItem
 
 from core.utils import _cart_id
 
+from decouple import config
+
 
 def counter(request):
     cart_count = 0
@@ -19,3 +21,7 @@ def counter(request):
         except Cart.DoesNotExist:
             pass
     return dict(cart_count=cart_count)
+
+
+def paypal_client_id(request):
+    return dict(paypal_client_id=config('PAYPAL_CLIENT_ID'))

@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 
 <section class="section-content padding-y bg">
-  <form action="" method="POST">
+  <form action="{% url 'place_order' %}" method="POST">
     {% csrf_token %}
     <div class="container">
       <div class="row">
@@ -44,7 +44,7 @@
                   <label for="">Phone Number</label>
                   <input
                     type="text"
-                    name="phone_number"
+                    name="phone"
                     class="form-control"
                     required
                   />
@@ -55,14 +55,18 @@
                   <label for="">Address Line 1</label>
                   <input
                     type="text"
-                    name="address_1"
+                    name="address_line_1"
                     class="form-control"
                     required
                   />
                 </div>
                 <div class="col form-group">
                   <label for="">Address Line 2</label>
-                  <input type="text" name="address_2" class="form-control" />
+                  <input
+                    type="text"
+                    name="address_line_2"
+                    class="form-control"
+                  />
                 </div>
               </div>
               <div class="form-row">
