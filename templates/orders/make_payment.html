@@ -47,11 +47,7 @@
                         <img src="{{item.product.image.url}}" class="img-sm" />
                       </div>
                       <figcaption class="info">
-                        <a
-                          href="{{ item.product.get_url }}"
-                          class="title text-dark"
-                          >{{item.product.product_name}}</a
-                        >
+                        <a href="{{ item.product.get_url }}" class="title text-dark">{{item.product.product_name}}</a>
                         <p class="text-muted small">
                           {% if item.variations.all %}
                           <!-- prettier-ignore -->
@@ -70,9 +66,7 @@
                   <td>
                     <div class="price-wrap">
                       <var class="price">${{item.sub_total}}</var>
-                      <small class="text-muted">
-                        ${{item.product.price}} each
-                      </small>
+                      <small class="text-muted"> ${{item.product.price}} each </small>
                     </div>
                     <!-- price-wrap .// -->
                   </td>
@@ -136,6 +130,7 @@
   var csrfToken = getCookie("csrftoken");
   var orderID = "{{order.order_number}}";
   var payment_method = "PayPal";
+  const redirect_url = "{% url 'order_complete' %}";
 
   // render the paypal button into #paypal-button-container
   paypal
@@ -177,7 +172,9 @@
               }),
             })
               .then((res) => res.json())
-              .then((data) => console.log(data));
+              .then((data) => {
+                window.location.href = `${redirect_url}?order_number=${data.order_number}&payment_id=${data.payment_id}`;
+              });
           }
         });
       },
