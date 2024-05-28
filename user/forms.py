@@ -25,3 +25,18 @@ class RegistrationForm(forms.ModelForm):
         cleaned_data = super(RegistrationForm, self).clean()
         if cleaned_data.get('password') != self.cleaned_data['confirm_password']:
             raise forms.ValidationError("Passwords don't match")
+
+
+class UserProfileForm(forms.ModelForm):
+    profile_picture = forms.ImageField(required=False, error_messages={'Invalid': {
+                                       'Image files only'}}, widget=forms.FileInput)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'phone_number',
+                  'address_line_1', 'address_line_2', 'city', 'state', 'country', 'profile_picture']
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'

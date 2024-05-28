@@ -46,6 +46,10 @@ $(document).ready(function () {
     // check if element exists
     $('[data-toggle="tooltip"]').tooltip();
   } // end if
+  $(".thumbnails a").click(function (e) {
+    e.preventDefault();
+    $(".main-image img").attr("src", $(this).attr("href"));
+  });
 });
 // jquery end
 

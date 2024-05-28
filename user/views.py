@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template.loader import render_to_string, get_template
+from django.db import connection
 
-from .forms import RegistrationForm
+from .forms import RegistrationForm, UserProfileForm
 from user.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -15,6 +16,7 @@ from django.contrib.auth.tokens import default_token_generator
 from decouple import config
 from core.utils import get_object_or_none, _cart_id
 from cart.models import Cart, CartItem
+from orders.models import Order
 
 import requests
 
@@ -161,7 +163,12 @@ def activate(request, uidb64, token):
 
 @login_required(login_url='login_user')
 def dashboard(request):
-    return render(request, 'user/dashboard.html')
+    orders_count = request.user.orderproduct_set.filter(
+        ordered=True).count()
+    context = {
+        'orders_count': orders_count
+    }
+    return render(request, 'user/dashboard.html', context)
 
 
 def forgot_password(request):
@@ -236,3 +243,80 @@ def reset_password(request):
         messages.success(request, "You have successfully set your password")
         return redirect('login_user')
     return render(request, 'user/reset_password.html')
+
+
+@login_required(login_url='login_user')
+def my_orders(request):
+    orders = request.user.order_set.filter(
+        is_ordered=True).order_by('-created_at')
+    context = {
+        'orders': orders
+    }
+    print(len(connection.queries))
+    return render(request, 'user/my_orders.html', context)
+
+
+@login_required(login_url='login_user')
+def edit_profile(request):
+    if request.method == 'POST':
+
+        profile_form = UserProfileForm(
+            request.POST, request.FILES, instance=request.user)
+        if profile_form.is_valid():
+            profile_form.save()
+            messages.success(
+                request, "Your profile has been updated successfully")
+            return redirect('edit_profile')
+        else:
+            context = {
+                'profile_form': profile_form
+            }
+            # print(profile_form.errors.get_context)
+            # messages.error(
+            #     request, "There was an error updating your profile, ensure your details are all okay")
+            return render(request, 'user/edit_profile.html', context)
+    else:
+        profile_form = UserProfileForm(instance=request.user)
+        context = {
+            'profile_form': profile_form
+        }
+
+        return render(request, 'user/edit_profile.html', context)
+
+
+@login_required(login_url='login_user')
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password').strip()
+        new_password = request.POST.get('new_password').strip()
+        confirm_new_password = request.POST.get('confirm_new_password').strip()
+        if not current_password or not new_password:
+            messages.error(
+                request, "current password and new password cannot be empty")
+            return render(request, 'user/change_password.html')
+        if not request.user.check_password(current_password):
+            messages.error(request, "current password is incorrect")
+            return render(request, 'user/change_password.html')
+        if new_password != confirm_new_password:
+            messages.error(
+                request, "new password and confirm new password should match")
+            return render(request, 'user/change_password.html')
+        request.user.set_password(new_password)
+        request.user.save()
+        messages.success(
+            request, "Your password has been updated successfully")
+        return redirect('change_password')
+
+    return render(request, 'user/change_password.html')
+
+
+@login_required(login_url='login_user')
+def order_details(request, orderNumber):
+    order = get_object_or_none(Order, order_number=orderNumber)
+    if not order:
+        return redirect('my_orders')
+    context = {
+        'order': order,
+        'order_sub_total': round(order.order_total - order.tax)
+    }
+    return render(request, 'user/order_details.html', context)

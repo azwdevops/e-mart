@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils.functional import cached_property
 
 
 class MyUserManager(BaseUserManager):
@@ -39,7 +40,13 @@ class User(AbstractBaseUser):
         max_length=50, unique=True, null=True, db_collation='case_insensitive')
     email = models.EmailField(
         max_length=50, unique=True, db_collation='case_insensitive')
-    # required fields
+    address_line_1 = models.CharField(max_length=100, blank=True, null=True)
+    address_line_2 = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    profile_picture = models.ImageField(
+        upload_to='users_profile_photos', blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)
@@ -61,5 +68,10 @@ class User(AbstractBaseUser):
     def has_module_perms(self, add_label):
         return True
 
+    @cached_property
     def get_full_name(self):
         return f'{self.first_name} {self.last_name}'
+
+    @cached_property
+    def get_full_address(self):
+        return f'{self.address_line_1} {self.address_line_2}'

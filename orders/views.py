@@ -8,7 +8,9 @@ from django.utils.encoding import force_bytes
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
+from django.db import connection
 from decouple import config
+from django.contrib.auth.decorators import login_required
 
 from cart.models import CartItem
 import datetime

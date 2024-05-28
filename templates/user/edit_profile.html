@@ -1,0 +1,88 @@
+{% extends 'base.html' %} {% block content %}
+<section class="section-conten padding-y bg">
+  {% include 'partials/errors.html' with form=profile_form %}
+
+  <div class="container">
+    <div class="row">
+      {% include 'partials/dashboard-sidebar.html' %}
+      <main class="col-md-9">
+        <article class="card">
+          <header class="card-header">
+            <strong class="d-inline-block mr-3">Edit your profile: </strong>
+          </header>
+          <div class="card-body">
+            <div class="text-right">
+              <img
+                src="{% if request.user.profile_picture %} {{request.user.profile_picture.url}} {% endif %}"
+                width="50"
+                height="50"
+                style="border-radius: 50%"
+                alt="Profile Picture"
+              />
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <form action="{% url 'edit_profile' %}" method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="">First Name</label>
+                      {{profile_form.first_name}}
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="">Last Name</label>
+                      {{profile_form.last_name}}
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="">Phone Number</label>
+                      {{profile_form.phone_number}}
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="">Profile Picture</label>
+                      {{profile_form.profile_picture}}
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="">Address Line 1</label>
+                      {{profile_form.address_line_1}}
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="">Address Line 2</label>
+                      {{profile_form.address_line_2}}
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-4">
+                      <label for="">City</label>
+                      {{profile_form.city}}
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="">State</label>
+                      {{profile_form.state}}
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="">Country</label>
+                      {{profile_form.country}}
+                    </div>
+                  </div>
+                  <input type="submit" value="Update Profile" class="btn btn-primary" />
+                </form>
+              </div>
+            </div>
+            <!-- row.// -->
+          </div>
+          <!-- card-body .// -->
+
+          <!-- table-responsive .end// -->
+        </article>
+        <!-- order-group.// -->
+      </main>
+    </div>
+    <!-- row.// -->
+  </div>
+</section>
+
+{% endblock content%}
