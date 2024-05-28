@@ -1,0 +1,10 @@
+<div class="rating-star">
+  <span>
+    <i class="fa fa-star{% if ratingNumber < 0.5 %}-o{% elif ratingNumber >= 0.5 and ratingNumber < 1 %}-half-o {% endif %}"></i>
+    <i class="fa fa-star{% if ratingNumber < 1.5 %}-o{% elif ratingNumber >= 1.5 and ratingNumber < 2 %}-half-o {% endif %}"></i>
+    <i class="fa fa-star{% if ratingNumber < 2.5 %}-o{% elif ratingNumber >= 2.5 and ratingNumber < 3 %}-half-o {% endif %}"></i>
+    <i class="fa fa-star{% if ratingNumber < 3.5 %}-o{% elif ratingNumber >= 3.5 and ratingNumber < 4 %}-half-o {% endif %}"></i>
+    <i class="fa fa-star{% if ratingNumber < 4.5 %}-o{% elif ratingNumber >= 4.5 and ratingNumber < 5 %}-half-o {% endif %}"></i>
+  </span>
+  <span>{{reviewsCount}}</span>
+</div>
